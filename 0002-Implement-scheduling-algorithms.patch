@@ -1,0 +1,53 @@
+From e7f32777968d5d8e8c24684401d78e91053c7f7a Mon Sep 17 00:00:00 2001
+From: HarryWang1 <hw1714@nyu.edu>
+Date: Sun, 27 Oct 2019 14:52:35 +0000
+Subject: [PATCH 2/2] Implement scheduling algorithms
+
+---
+ sanity.c |   33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+ create mode 100644 sanity.c
+
+diff --git a/sanity.c b/sanity.c
+new file mode 100644
+index 0000000..1317310
+--- /dev/null
++++ b/sanity.c
+@@ -0,0 +1,33 @@
++#include "types.h"
++#include "user.h"
++
++int 
++main(int argc, char *argv[]){
++    int i,wtime,totalwtime, rtime, totalrtime, iotime, totaliotime, status, p[20];
++
++    for (i = 0; i < 20; i++){
++        p[i] = fork();
++        if (p[i] > 0){
++            continue;
++        }
++        int j;
++        for (j = 0; j < 40000000; j++){}
++        exit();
++    }
++
++    while (wait_stat(&wtime, &rtime, &iotime, &status) != -1){
++
++        for (i = 0; i < 20; i++){
++            if (status == p[i]){
++                printf(1, "Child pid: %d, wait time: %d, running time: %d, turnaround time: %d\n", status, wtime, rtime, wtime + rtime + iotime);
++
++                totalwtime += wtime;
++                totalrtime += rtime;
++                totaliotime += iotime;
++            }
++        }
++    }
++
++    printf(1, "average wait time: %d, average run time: %d, average turnaround time: %d", totalwtime / 20, totalrtime / 20, (totaliotime + totalwtime + totalrtime) / 20);
++    exit();
++}
+\ No newline at end of file
+-- 
+1.7.9.5
+
